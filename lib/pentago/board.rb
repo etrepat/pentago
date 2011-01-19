@@ -43,6 +43,7 @@ module Pentago
 
       squares_tmp = squares.dup
 
+      # should find a "Rubier" way of doing this... should ask
       iterator = Range.new(0, 8).to_a
       iterator.reverse! if direction == :counter_clockwise
       iterator.each do |p|
