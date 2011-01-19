@@ -51,8 +51,34 @@ module Pentago
     end
 
     describe '#rotate_square' do
-      it 'should allow us to rotate a square CW'
-      it 'should allow us to rotate a square CCW'
+      before(:each) do
+        @board = Board.new
+      end
+
+      it 'should raise InvalidSquareError if invalid square' do
+        expect {
+          @board.rotate(7, :clockwise)
+        }.to raise_error(Pentago::Board::InvalidSquareError)
+      end
+
+      it 'should raise InvalidDirectionError if invalid direction' do
+        expect {
+          @board.rotate(0, :foowise)
+        }.to raise_error(Pentago::Board::InvalidDirectionError)
+      end
+
+      it 'should allow us to rotate a square CW' do
+        @board.place_marker(0, 0, 1)
+        @board.rotate_square(0, :clockwise)
+        @board.squares[2].should == 1
+      end
+
+      it 'should allow us to rotate a square CCW' do
+        @board.place_marker(0, 0, 1)
+        @board.rotate_square(0, :clockwise)
+        @board.rotate_square(0, :counter_clockwise)
+        @board.squares[0].should == 1
+      end
     end
   end
 end
