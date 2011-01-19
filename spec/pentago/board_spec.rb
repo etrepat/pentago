@@ -57,13 +57,13 @@ module Pentago
 
       it 'should raise InvalidSquareError if invalid square' do
         expect {
-          @board.rotate(7, :clockwise)
+          @board.rotate_square(7, :clockwise)
         }.to raise_error(Pentago::Board::InvalidSquareError)
       end
 
       it 'should raise InvalidDirectionError if invalid direction' do
         expect {
-          @board.rotate(0, :foowise)
+          @board.rotate_square(0, :foowise)
         }.to raise_error(Pentago::Board::InvalidDirectionError)
       end
 
@@ -76,6 +76,7 @@ module Pentago
       it 'should allow us to rotate a square CCW' do
         @board.place_marker(0, 0, 1)
         @board.rotate_square(0, :clockwise)
+        @board.squares[2].should == 1
         @board.rotate_square(0, :counter_clockwise)
         @board.squares[0].should == 1
       end

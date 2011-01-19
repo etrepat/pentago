@@ -2,6 +2,8 @@ module Pentago
   class Board
     class BoardError < StandardError; end
     class IllegalPositionError < BoardError; end
+    class InvalidSquareError < BoardError; end
+    class InvalidDirectionError < BoardError; end
 
     ROTATION_DIRECTIONS = [:clockwise, :counter_clockwise]
 
@@ -34,6 +36,24 @@ module Pentago
       @squares[pos] = marker
     end
 
+    def rotate_square(which, direction)
+      raise InvalidSquareError, "Invalid square" unless SQUARES[which]
+      raise InvalidDirectionError, "Unrecognized direction" \
+        unless ROTATION_DIRECTIONS.include? direction
+
+      squares_tmp = squares.dup
+
+      iterator = Range.new(0, 8).to_a
+      iterator.reverse! if direction == :counter_clockwise
+      iterator.each do |p|
+        position = SQUARES[which][p]
+        marker = squares[position]
+        squares_tmp[position + ROTATION_MATRICES[direction][p]] = marker
+      end
+
+      @squares = squares_tmp
+    end
+
     def to_s
       output = "\n"
       squares.each_with_index do |value, index|
@@ -58,10 +78,6 @@ module Pentago
     end
 
     protected
-
-    def position(x, y)
-      x + y*6
-    end
 
     def initialize_from_previous_state(board)
       if board.is_a?(Array) || board.is_a?(Pentago::Board)
