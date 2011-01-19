@@ -43,7 +43,6 @@ module Pentago
       end
 
       it 'should raise IllegalPositionError if previously occupied' do
-        board = Board.new
         expect do
           @board.place_marker(3, 2, 1)
           @board.place_marker(3, 2, 1)
@@ -51,7 +50,7 @@ module Pentago
       end
     end
 
-    describe '#rotate' do
+    describe '#rotate_square' do
       it 'should allow us to rotate a square CW'
       it 'should allow us to rotate a square CCW'
     end
