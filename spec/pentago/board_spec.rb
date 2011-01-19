@@ -27,24 +27,26 @@ module Pentago
     end
 
     describe '#place_marker' do
+      before(:each) do
+        @board = Board.new
+      end
+
       it 'should let us place a marker' do
-        board = Board.new
-        board.place_marker(1, 2, 1)
-        board.squares[13].should == 1
+        @board.place_marker(1, 2, 1)
+        @board.squares[13].should == 1
       end
 
       it 'should raise IllegalPositionError when out of bounds' do
-        board = Board.new
         expect {
-          board.place_marker(6, 8, 1)
+          @board.place_marker(6, 8, 1)
         }.to raise_error(Pentago::Board::IllegalPositionError)
       end
 
       it 'should raise IllegalPositionError if previously occupied' do
         board = Board.new
         expect do
-          board.place_marker(3, 2, 1)
-          board.place_marker(3, 2, 1)
+          @board.place_marker(3, 2, 1)
+          @board.place_marker(3, 2, 1)
         end.to raise_error(Pentago::Board::IllegalPositionError)
       end
     end
