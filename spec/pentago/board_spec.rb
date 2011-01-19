@@ -67,10 +67,13 @@ module Pentago
         }.to raise_error(Pentago::Board::InvalidDirectionError)
       end
 
-      it 'should allow us to rotate a square CW' do
+      it 'should allow us to rotate a square CW/CCW' do
         @board.place_marker(0, 0, 1)
         @board.rotate_square(0, :clockwise)
         @board.squares[2].should == 1
+
+        @board.rotate_square(0, :counter_clockwise)
+        @board.squares[0].should == 1
       end
 
       it 'rotating CW should not affect neighbour squares' do
@@ -79,14 +82,6 @@ module Pentago
         @board.place_marker(3, 1, 2)
         @board.rotate_square(1, :clockwise)
         @board.squares[2].should == 1 && @board.squares[4].should == 2
-      end
-
-      it 'should allow us to rotate a square CCW' do
-        @board.place_marker(0, 0, 1)
-        @board.rotate_square(0, :clockwise)
-        @board.squares[2].should == 1
-        @board.rotate_square(0, :counter_clockwise)
-        @board.squares[0].should == 1
       end
     end
   end
