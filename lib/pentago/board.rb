@@ -1,15 +1,14 @@
 module Pentago
   class Board
-    class BoardError < StandardError; end
-    class IllegalPositionError < BoardError; end
-    class InvalidSquareError < BoardError; end
-    class InvalidDirectionError < BoardError; end
+    IllegalPositionError  = Class.new(StandardError)
+    InvalidSquareError    = Class.new(StandardError)
+    InvalidDirectionError = Class.new(StandardError)
 
     ROTATION_DIRECTIONS = [:clockwise, :counter_clockwise]
 
     ROTATION_MATRICES = {
-      :clockwise => [2,7,12,-5,0,5,-12,-7,-2],
-      :counter_clockwise => [12,5,-2,7,0,-7,2,-5,-12]
+      :clockwise          => [2,7,12,-5,0,5,-12,-7,-2],
+      :counter_clockwise  => [12,5,-2,7,0,-7,2,-5,-12]
     }
 
     SQUARES = [
@@ -41,18 +40,16 @@ module Pentago
       raise InvalidDirectionError, "Unrecognized direction" \
         unless ROTATION_DIRECTIONS.include? direction
 
-      squares_tmp = squares.dup
-
-      # should find a "Rubier" way of doing this... should ask
-      iterator = Range.new(0, 8).to_a
+      board = squares.dup
+      iterator = (0..8).to_a
       iterator.reverse! if direction == :counter_clockwise
       iterator.each do |p|
-        position = SQUARES[which][p]
-        marker = squares[position]
-        squares_tmp[position + ROTATION_MATRICES[direction][p]] = marker
+        pos = SQUARES[which][p]
+        marker = squares[pos]
+        board[pos + ROTATION_MATRICES[direction][p]] = marker
       end
-
-      @squares = squares_tmp
+      
+      @squares = board
     end
 
     def to_s
@@ -64,7 +61,6 @@ module Pentago
           elsif index % 3 == 0
             output << "|"
           end
-
 				  output << "---------+---------\n" if index % 18 == 0
         end
 
