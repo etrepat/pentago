@@ -32,63 +32,111 @@ module Pentago
         }.to raise_error(TypeError)
       end
     end
-
-    describe '#place_marker' do
+    
+    describe 'instance methods' do
       before(:each) do
-        @board = Board.new
+        state = Array.new(Board::SIZE, nil)
+        state[7] = :white
+        state[14] = :white
+        state[10] = :black
+        state[22] = :black
+        @board = Board.new(state)
+      end
+      
+      describe '#[]' do
+        it 'should let us get marble in position' do
+          @board[1,1].should == :white
+          @board[2,2].should == :white
+          @board[4,1].should == :black
+          @board[4,3].should == :black
+          @board[3,5].shoud be_nil
+        end
+        
+        it 'should raise IllegalPosition if accessing out of bounds' do
+          expect {
+            m = @board[7,3]
+          }.to raise_error(Pentago::Board::IllegalPositionError)
+        end
+      end
+      
+      describe '#[]=' do
+        it 'should set a marble in position' do
+          @board[4,5] = :white
+          @board[4,5].should == :white
+          @board[4,2] = :black
+          @board[4,2].should == :black
+        end
+        
+        it 'should raise IllegalPosition if accessing out of bounds' do
+          expect {
+            @board[6,2] = :black
+          }.to raise_error(Pentago::Board::IllegalPositionError)
+        end
+        
+        it 'should raise IllegalPostionError if setting an occupied cell' do
+          expect {
+            @board[2,2] = :black
+          }.to raise_error(Pentago::Board::IllegalPostionError)
+        end
+      end
+      
+      describe '#place_marker' do
+        before(:each) do
+          @board = Board.new
+        end
+
+        it 'should let us place a marker' do
+          @board.place_marker(1, 2, 1)
+          @board.squares[13].should == 1
+        end
+
+        it 'should raise IllegalPositionError when out of bounds' do
+          expect {
+            @board.place_marker(6, 8, 1)
+          }.to raise_error(Pentago::Board::IllegalPositionError)
+        end
+
+        it 'should raise IllegalPositionError if previously occupied' do
+          expect do
+            @board.place_marker(3, 2, 1)
+            @board.place_marker(3, 2, 1)
+          end.to raise_error(Pentago::Board::IllegalPositionError)
+        end
       end
 
-      it 'should let us place a marker' do
-        @board.place_marker(1, 2, 1)
-        @board.squares[13].should == 1
-      end
+      describe '#rotate_square' do
+        before(:each) do
+          @board = Board.new
+        end
 
-      it 'should raise IllegalPositionError when out of bounds' do
-        expect {
-          @board.place_marker(6, 8, 1)
-        }.to raise_error(Pentago::Board::IllegalPositionError)
-      end
+        it 'should raise InvalidSquareError if invalid square' do
+          expect {
+            @board.rotate_square(7, :clockwise)
+          }.to raise_error(Pentago::Board::InvalidSquareError)
+        end
 
-      it 'should raise IllegalPositionError if previously occupied' do
-        expect do
-          @board.place_marker(3, 2, 1)
-          @board.place_marker(3, 2, 1)
-        end.to raise_error(Pentago::Board::IllegalPositionError)
-      end
-    end
+        it 'should raise InvalidDirectionError if invalid direction' do
+          expect {
+            @board.rotate_square(0, :foowise)
+          }.to raise_error(Pentago::Board::InvalidDirectionError)
+        end
 
-    describe '#rotate_square' do
-      before(:each) do
-        @board = Board.new
-      end
+        it 'should allow us to rotate a square CW/CCW' do
+          @board.place_marker(0, 0, 1)
+          @board.rotate_square(0, :clockwise)
+          @board.squares[2].should == 1
 
-      it 'should raise InvalidSquareError if invalid square' do
-        expect {
-          @board.rotate_square(7, :clockwise)
-        }.to raise_error(Pentago::Board::InvalidSquareError)
-      end
+          @board.rotate_square(0, :counter_clockwise)
+          @board.squares[0].should == 1
+        end
 
-      it 'should raise InvalidDirectionError if invalid direction' do
-        expect {
-          @board.rotate_square(0, :foowise)
-        }.to raise_error(Pentago::Board::InvalidDirectionError)
-      end
-
-      it 'should allow us to rotate a square CW/CCW' do
-        @board.place_marker(0, 0, 1)
-        @board.rotate_square(0, :clockwise)
-        @board.squares[2].should == 1
-
-        @board.rotate_square(0, :counter_clockwise)
-        @board.squares[0].should == 1
-      end
-
-      it 'rotating CW should not affect neighbour squares' do
-        @board.place_marker(0, 0, 1)
-        @board.rotate_square(0, :clockwise)
-        @board.place_marker(3, 1, 2)
-        @board.rotate_square(1, :clockwise)
-        @board.squares[2].should == 1 && @board.squares[4].should == 2
+        it 'rotating CW should not affect neighbour squares' do
+          @board.place_marker(0, 0, 1)
+          @board.rotate_square(0, :clockwise)
+          @board.place_marker(3, 1, 2)
+          @board.rotate_square(1, :clockwise)
+          @board.squares[2].should == 1 && @board.squares[4].should == 2
+        end
       end
     end
   end
