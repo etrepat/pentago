@@ -60,6 +60,66 @@ module Pentago
       
       @squares = board
     end
+        
+    def full?
+      squares.compact.size == SIZE
+    end
+    
+    def clear
+      @squares.replace(Array.new(SIZE, nil))
+    end
+        
+    def find_winner
+      # check horizontal lines
+      ROWS.times do |y|
+        player = self[1,y]
+        return player if (player && player == self[2,y] && player == self[3,y] && \
+          player == self[4,y] && (player == self[0,y] || player == self[5,y]))
+      end
+      
+      # check vertical lines
+      COLS.times do |x|
+        player = self[x,1]
+        return player if (player && player == self[x,2] && player == self[x,3] && \
+          player == self[x,4] && (player == self[x,0] || player == self[x,5]))
+      end
+      
+      # check center diagonal lines
+      player = self[1,1]
+      return player if (player && player == self[2,2] && player == self[3,3] && \
+        player == self[4,4] && (player == self[0,0] || player == self[5,5]))
+        
+      player = self[4,1]
+      return player if (player && player == self[3,2] && player == self[2,3] && \
+        player == self[1,4] && (player == self[5,0] || player == self[0,5]))
+
+      # check off-center diagonal lines
+      player = self[0,1]
+      return player if (player && player == self[1,2] && player == self[2,3] && \
+        player == self[3,4] && player == self[4,5])
+      
+      player = self[1,0]
+      return player if (player && player == self[2,1] && player == self[3,2] && \
+        player == self[4,3] && player == self[5,4])
+      
+      player = self[0,4]
+      return player if (player && player == self[1,3] && player == self[2,2] && \
+        player == self[3,1] && player == self[4,0])
+      
+      player = self[1,5]
+      return player if (player && player == self[2,4] && player == self[3,3] && \
+        player == self[4,2] && player == self[5,1])
+      
+      nil
+    end
+    
+    def game_over?
+      full? || find_winner
+    end
+    
+    def tie?
+      full? && !find_winner
+    end
 
     def to_s
       output = "\n"

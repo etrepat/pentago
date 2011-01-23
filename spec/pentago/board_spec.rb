@@ -43,6 +43,18 @@ module Pentago
         @board = Board.new(state)
       end
       
+      def fill_board(board)
+        board_copy = board.dup
+        players = [:white, :black].cycle
+        Board::COLS.times do |x|
+          Board::ROWS.times do |y|
+            marble = board[x,y]
+            board[x,y] = players.next unless marble
+          end
+        end
+        board_copy
+      end
+      
       describe '#[]' do
         it 'should let us get marble in position' do
           @board[1,1].should == :white
@@ -81,10 +93,6 @@ module Pentago
       end
 
       describe '#rotate' do
-        before(:each) do
-          @board = Board.new
-        end
-
         it 'should raise InvalidSquareError if invalid square' do
           expect {
             @board.rotate(7, :clockwise)
@@ -112,6 +120,82 @@ module Pentago
           @board[3,1] = 2
           @board.rotate(1, :clockwise)
           @board[2,0].should == 1 && @board[4,0].should == 2
+        end
+      end
+      
+      describe '#full?' do
+        it 'should return true when board is full, false otherwise' do
+          @board.full?.should be_false
+          @board = fill_board(@board)
+          @board.full?.should be_true
+        end
+      end
+      
+      describe '#clear' do
+        it 'should empty the board (set all positions to nil)' do
+          @board.squares.all? { |s| s.nil? }.should be_false
+          @board.clear
+          @board.squares.all? { |s| s.nil? }.should be_true
+        end
+      end
+      
+      describe '#find_winner' do
+        it 'should return the marble value of winner player, nil otherwise' do
+          # empty board
+          @board.clear
+          @board.find_winner.should be_nil
+          
+          # horz.
+          @board[0,1] = @board[1,1] = @board[2,1] = @board[3,1] = @board[4,1] = 2
+          @board.find_winner.should == 2
+          
+          # vert.
+          @board.clear
+          @board[1,1] = @board[1,2] = @board[1,3] = @board[1,4] = @board[1,5] = 2
+          @board.find_winner.should == 2
+          
+          # center diagonals
+          @board.clear
+          @board[0,0] = @board[1,1] = @board[2,2] = @board[3,3] = @board[4,4] = 2
+          @board.find_winner.should == 2
+          
+          @board.clear
+          @board[5,0] = @board[4,1] = @board[3,2] = @board[2,3] = @board[1,4] = 2
+          @board.find_winner.should == 2
+          
+          # off-center diagonals
+          @board.clear
+          @board[0,1] = @board[1,2] = @board[2,3] = @board[3,4] = @board[4,5] = 2
+          @board.find_winner.should == 2
+          
+          @board.clear
+          @board[1,0] = @board[2,1] = @board[3,2] = @board[4,3] = @board[5,4] = 2
+          @board.find_winner.should == 2
+          
+          @board.clear
+          @board[0,4] = @board[1,3] = @board[2,2] = @board[3,1] = @board[4,0] = 2
+          @board.find_winner.should == 2
+          
+          @board.clear
+          @board[1,5] = @board[2,4] = @board[3,3] = @board[4,2] = @board[5,1] = 2
+          @board.find_winner.should == 2
+          
+          # from an actual game, actually this one:
+          # http://en.wikipedia.org/wiki/File:Pentago-Game-Winning-Position.jpg
+          winning = [1,1,1,nil,2,nil,nil,2,1,2,2,1,nil,nil,2,1,2,nil,nil,1,2,
+            nil,1,nil,2,nil,nil,2,nil,1,nil,nil,nil,nil,nil,nil]
+          board = Board.new(winning)
+          board.find_winner.should == 1
+          
+          # from an actual game, move example on box:
+          playing = [nil,1,2,nil,1,nil,nil,2,nil,nil,2,nil,nil,nil,1,2,nil,nil,
+            2,1,2,nil,nil,2,1,nil,2,nil,nil,1,1,nil,2,nil,1,1]
+          board = Board.new(playing)
+          board.find_winner.should be_nil          
+          # play winning move
+          board[3,5] = 1
+          board.rotate(2, :counter_clockwise)
+          board.find_winner.should == 1
         end
       end
     end
