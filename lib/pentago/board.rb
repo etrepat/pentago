@@ -155,10 +155,14 @@ module Pentago
     end
 
     def initialize_from_previous_state(board)
-      if board.is_a?(Array) || board.is_a?(Pentago::Board)
+      case 
+      when board.is_a?(Array)
+        raise TypeError, 'incompatible board array' if board.size != SIZE
+        @squares = board.dup
+      when board.is_a?(Pentago::Board)
         @squares = board.dup.to_a
       else
-        raise TypeError, 'Incompatible types'
+        raise TypeError, 'incompatible types'
       end
     end
   end

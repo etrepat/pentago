@@ -30,6 +30,11 @@ module Pentago
         expect {
           board = Board.new(previous)
         }.to raise_error(TypeError)
+        
+        previous = Array.new(Board::SIZE-5, nil)
+        expect {
+          board = Board.new(previous)
+        }.to raise_error(TypeError)
       end
     end
     
