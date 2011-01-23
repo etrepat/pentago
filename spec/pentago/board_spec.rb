@@ -5,24 +5,31 @@ module Pentago
     describe '#initialize' do
       it 'should create an empty board' do
         board = Board.new
-        board.squares.should == Array.new(Board::CELLS, 0)
+        board.squares.should == Array.new(Board::SIZE, nil)
       end
 
       it 'should create a board based on a previous state' do
         # from array
-        previous = Array.new(Board::CELLS, 0)
+        previous = Array.new(Board::SIZE, nil)
         6.times do |n|
-          pos = rand(Board::CELLS+1)
-          pos = rand(Board::CELLS+1) while previous[pos] != 0
+          pos = rand(Board::SIZE+1)
+          pos = rand(Board::SIZE+1) while previous[pos]
           previous[pos] = 1 # at this point we don't mind about players
         end
 
-        board = Board.new(:board => previous)
+        board = Board.new(previous)
         board.squares.should == previous
 
         # from another board
-        board2 = Board.new(:board => board)
+        board2 = Board.new(board)
         board2.squares.should == board.squares
+      end
+      
+      it 'should raise TypeError if bad previous state' do
+        previous = Hash.new
+        expect {
+          board = Board.new(previous)
+        }.to raise_error(TypeError)
       end
     end
 

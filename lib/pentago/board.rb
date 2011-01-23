@@ -18,19 +18,22 @@ module Pentago
 	    [21,22,23,27,28,29,33,34,35]
     ]
 
-    CELLS = 36
+    SIZE = 36
 
-    def initialize(options={})
-      @squares = Array.new(CELLS, 0)
-      initialize_from_previous_state(options[:board]) if options[:board]
+    def initialize(other=nil)
+      if other
+        initialize_from_previous_state(other)
+      else
+        @squares = Array.new(SIZE, nil)
+      end
     end
 
     attr_reader :squares
 
     def place_marker(x, y, marker)
-      pos = x + 6*y
-      raise IllegalPositionError, "Illegal position [#{x}, #{y}]" unless squares[pos]
-      raise IllegalPositionError, "Position already occupied" if squares[pos] != 0
+      pos = translate x, y
+      raise IllegalPositionError, "Illegal position [#{x}, #{y}]" unless (0...SIZE).include?(pos)
+      raise IllegalPositionError, "already occupied position" if squares[pos]
 
       @squares[pos] = marker
     end
@@ -64,7 +67,7 @@ module Pentago
 				  output << "---------+---------\n" if index % 18 == 0
         end
 
-        output << (value != 0 ? " #{value} " : ' . ')
+        output << (value.nil? ? ' . ' : " #{value} ")
       end
 
       output
@@ -75,6 +78,10 @@ module Pentago
     end
 
     protected
+    
+    def translate(x,y)
+      x + y*6
+    end
 
     def initialize_from_previous_state(board)
       if board.is_a?(Array) || board.is_a?(Pentago::Board)
