@@ -17,7 +17,9 @@ module Pentago
 	    [18,19,20,24,25,26,30,31,32],
 	    [21,22,23,27,28,29,33,34,35]
     ]
-
+    
+    ROWS = 6
+    COLS = 6
     SIZE = 36
 
     def initialize(other=nil)
@@ -30,9 +32,19 @@ module Pentago
 
     attr_reader :squares
 
+    def [](x, y)
+      raise IllegalPositionError, "Illegal position [#{x}, #{y}]" unless in_range?(x, y)
+      @squares[translate(x, y)]
+    end
+    
+    def []=(x, y, marble)
+      raise IllegalPositionError, 'already occupied position' if self[x, y]
+      @squares[translate(x, y)] = marble
+    end
+
     def place_marker(x, y, marker)
       pos = translate x, y
-      raise IllegalPositionError, "Illegal position [#{x}, #{y}]" unless (0...SIZE).include?(pos)
+      raise IllegalPositionError, "Illegal position [#{x}, #{y}]" unless in_range?(x, y)
       raise IllegalPositionError, "already occupied position" if squares[pos]
 
       @squares[pos] = marker
@@ -80,7 +92,12 @@ module Pentago
     protected
     
     def translate(x,y)
-      x + y*6
+      x + ROWS*y
+    end
+    
+    def in_range?(x, y)
+      r = 0...ROWS
+      r.include?(x) && r.include?(y)
     end
 
     def initialize_from_previous_state(board)
