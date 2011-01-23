@@ -79,63 +79,39 @@ module Pentago
           }.to raise_error(Pentago::Board::IllegalPositionError)
         end
       end
-      
-      describe '#place_marker' do
-        before(:each) do
-          @board = Board.new
-        end
 
-        it 'should let us place a marker' do
-          @board.place_marker(1, 2, 1)
-          @board.squares[13].should == 1
-        end
-
-        it 'should raise IllegalPositionError when out of bounds' do
-          expect {
-            @board.place_marker(6, 8, 1)
-          }.to raise_error(Pentago::Board::IllegalPositionError)
-        end
-
-        it 'should raise IllegalPositionError if previously occupied' do
-          expect do
-            @board.place_marker(3, 2, 1)
-            @board.place_marker(3, 2, 1)
-          end.to raise_error(Pentago::Board::IllegalPositionError)
-        end
-      end
-
-      describe '#rotate_square' do
+      describe '#rotate' do
         before(:each) do
           @board = Board.new
         end
 
         it 'should raise InvalidSquareError if invalid square' do
           expect {
-            @board.rotate_square(7, :clockwise)
+            @board.rotate(7, :clockwise)
           }.to raise_error(Pentago::Board::InvalidSquareError)
         end
 
         it 'should raise InvalidDirectionError if invalid direction' do
           expect {
-            @board.rotate_square(0, :foowise)
+            @board.rotate(0, :foowise)
           }.to raise_error(Pentago::Board::InvalidDirectionError)
         end
 
         it 'should allow us to rotate a square CW/CCW' do
-          @board.place_marker(0, 0, 1)
-          @board.rotate_square(0, :clockwise)
-          @board.squares[2].should == 1
+          @board[0,0] = 1
+          @board.rotate(0, :clockwise)
+          @board[2,0].should == 1
 
-          @board.rotate_square(0, :counter_clockwise)
-          @board.squares[0].should == 1
+          @board.rotate(0, :counter_clockwise)
+          @board[0,0].should == 1
         end
 
         it 'rotating CW should not affect neighbour squares' do
-          @board.place_marker(0, 0, 1)
-          @board.rotate_square(0, :clockwise)
-          @board.place_marker(3, 1, 2)
-          @board.rotate_square(1, :clockwise)
-          @board.squares[2].should == 1 && @board.squares[4].should == 2
+          @board[0,0] = 1
+          @board.rotate(0, :clockwise)
+          @board[3,1] = 2
+          @board.rotate(1, :clockwise)
+          @board[2,0].should == 1 && @board[4,0].should == 2
         end
       end
     end

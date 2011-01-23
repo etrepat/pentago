@@ -41,27 +41,21 @@ module Pentago
       raise IllegalPositionError, 'already occupied position' if self[x, y]
       @squares[translate(x, y)] = marble
     end
-
-    def place_marker(x, y, marker)
-      pos = translate x, y
-      raise IllegalPositionError, "Illegal position [#{x}, #{y}]" unless in_range?(x, y)
-      raise IllegalPositionError, "already occupied position" if squares[pos]
-
-      @squares[pos] = marker
-    end
-
-    def rotate_square(which, direction)
-      raise InvalidSquareError, "Invalid square" unless SQUARES[which]
+    
+    def rotate(square, direction = :clockwise)
+      raise InvalidSquareError, "Invalid square" unless SQUARES[square]
       raise InvalidDirectionError, "Unrecognized direction" \
-        unless ROTATION_DIRECTIONS.include? direction
+        unless ROTATION_DIRECTIONS.include?(direction)
 
       board = squares.dup
+      
       iterator = (0..8).to_a
       iterator.reverse! if direction == :counter_clockwise
+      
       iterator.each do |p|
-        pos = SQUARES[which][p]
-        marker = squares[pos]
-        board[pos + ROTATION_MATRICES[direction][p]] = marker
+        position = SQUARES[square][p]
+        marble = squares[position]
+        board[position + ROTATION_MATRICES[direction][p]] = marble
       end
       
       @squares = board
