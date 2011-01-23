@@ -49,7 +49,7 @@ module Pentago
           @board[2,2].should == :white
           @board[4,1].should == :black
           @board[4,3].should == :black
-          @board[3,5].shoud be_nil
+          @board[3,5].should be_nil
         end
         
         it 'should raise IllegalPosition if accessing out of bounds' do
@@ -76,7 +76,7 @@ module Pentago
         it 'should raise IllegalPostionError if setting an occupied cell' do
           expect {
             @board[2,2] = :black
-          }.to raise_error(Pentago::Board::IllegalPostionError)
+          }.to raise_error(Pentago::Board::IllegalPositionError)
         end
       end
       
