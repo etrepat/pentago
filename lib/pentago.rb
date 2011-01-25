@@ -12,5 +12,7 @@ require_relative 'pentago/version'
 
 require_relative 'pentago/players/base'
 require_relative 'pentago/players/dummy'
+require_relative 'pentago/players/human'
 
 require_relative 'pentago/ui/console'
+
