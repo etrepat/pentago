@@ -3,8 +3,8 @@ require 'spec_helper'
 module Pentago
   describe Game do
     before(:each) do
-      @player1  = Pentago::Players::Dummy.new(1)
-      @player2  = Pentago::Players::Dummy.new(2)
+      @player1  = Pentago::DummyPlayer.new(1)
+      @player2  = Pentago::DummyPlayer.new(2)
       @board    = Pentago::Board.new
 
       @game     = Pentago::Game.new(@player1, @player2, @board)
