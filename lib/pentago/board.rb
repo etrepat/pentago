@@ -60,9 +60,13 @@ module Pentago
       
       @squares = board
     end
+    
+    def moves
+      squares.compact.size
+    end
         
     def full?
-      squares.compact.size == SIZE
+      moves == SIZE
     end
     
     def clear
@@ -122,7 +126,7 @@ module Pentago
     end
 
     def to_s
-      output = "\n"
+      output = ''
       squares.each_with_index do |value, index|
         if index != 0
           if index % 6 == 0
