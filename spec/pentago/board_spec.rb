@@ -12,8 +12,8 @@ module Pentago
         # from array
         previous = Array.new(Board::SIZE, nil)
         6.times do |n|
-          pos = rand(Board::SIZE+1)
-          pos = rand(Board::SIZE+1) while previous[pos]
+          pos = rand(Board::SIZE)
+          pos = rand(Board::SIZE) while previous[pos]
           previous[pos] = 1 # at this point we don't mind about players
         end
 
