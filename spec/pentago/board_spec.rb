@@ -7,7 +7,9 @@ module Pentago
         board = Board.new
         board.squares.should == Array.new(Board::SIZE, nil)
       end
-
+    end
+    
+    describe '#restore' do
       it 'should create a board based on a previous state' do
         # from array
         previous = Array.new(Board::SIZE, nil)
@@ -17,25 +19,25 @@ module Pentago
           previous[pos] = 1 # at this point we don't mind about players
         end
 
-        board = Board.new(previous)
+        board = Board.restore(previous)
         board.squares.should == previous
 
         # from another board
-        board2 = Board.new(board)
+        board2 = Board.restore(board)
         board2.squares.should == board.squares
       end
       
       it 'should raise TypeError if bad previous state' do
         previous = Hash.new
         expect {
-          board = Board.new(previous)
+          board = Board.restore(previous)
         }.to raise_error(TypeError)
         
         previous = Array.new(Board::SIZE-5, nil)
         expect {
-          board = Board.new(previous)
+          board = Board.restore(previous)
         }.to raise_error(TypeError)
-      end
+      end      
     end
     
     describe 'instance methods' do
@@ -45,7 +47,7 @@ module Pentago
         state[14] = :white
         state[10] = :black
         state[22] = :black
-        @board = Board.new(state)
+        @board = Board.restore(state)
       end
       
       def fill_board(board)
@@ -189,13 +191,13 @@ module Pentago
           # http://en.wikipedia.org/wiki/File:Pentago-Game-Winning-Position.jpg
           winning = [1,1,1,nil,2,nil,nil,2,1,2,2,1,nil,nil,2,1,2,nil,nil,1,2,
             nil,1,nil,2,nil,nil,2,nil,1,nil,nil,nil,nil,nil,nil]
-          board = Board.new(winning)
+          board = Board.restore(winning)
           board.find_winner.should == 1
           
           # from an actual game, move example on box:
           playing = [nil,1,2,nil,1,nil,nil,2,nil,nil,2,nil,nil,nil,1,2,nil,nil,
             2,1,2,nil,nil,2,1,nil,2,nil,nil,1,1,nil,2,nil,1,1]
-          board = Board.new(playing)
+          board = Board.restore(playing)
           board.find_winner.should be_nil          
           # play winning move
           board[3,5] = 1

@@ -22,15 +22,11 @@ module Pentago
     COLS = 6
     SIZE = 36
 
-    def initialize(other=nil)
-      if other
-        initialize_from_previous_state(other)
-      else
-        @squares = Array.new(SIZE, nil)
-      end
+    def initialize
+      @squares = Array.new(SIZE, nil)
     end
 
-    attr_reader :squares
+    attr_accessor :squares
 
     def [](x, y)
       raise IllegalPositionError, "Illegal position [#{x}, #{y}]" unless in_range?(x, y)
@@ -158,6 +154,21 @@ module Pentago
     def to_a
       squares
     end
+    
+    def self.restore(board)
+      restored = Board.new
+      restored.squares = case
+      when board.is_a?(Array)
+        raise TypeError, "incompatible board array #{board.size}" if board.size != SIZE
+        board.dup
+      when board.is_a?(Pentago::Board)
+        board.dup.to_a
+      else
+        raise TypeError, 'incompatible types'
+      end
+      
+      restored      
+    end
 
     protected
 
@@ -168,18 +179,6 @@ module Pentago
     def in_range?(x, y)
       r = 0...ROWS
       r.include?(x) && r.include?(y)
-    end
-
-    def initialize_from_previous_state(board)
-      case
-      when board.is_a?(Array)
-        raise TypeError, "incompatible board array #{board.size}" if board.size != SIZE
-        @squares = board.dup
-      when board.is_a?(Pentago::Board)
-        @squares = board.dup.to_a
-      else
-        raise TypeError, 'incompatible types'
-      end
     end
   end
 end
