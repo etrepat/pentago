@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+$:.unshift File.dirname(__FILE__) + '/../lib'
+require 'pentago'
+
+Pentago::UI::Console.new(ARGV, STDIN, STDOUT).run
