@@ -1,6 +1,11 @@
 module Pentago
   module Players
     class Human < Base
+      def initialize(marble, callback=nil)
+        super(marble)
+        @ask_for_move_callback = callback
+      end
+
       attr_accessor :ask_for_move_callback
 
       def compute_next_move(board)
