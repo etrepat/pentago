@@ -112,9 +112,9 @@ BANNER
 
       def load_player(engine_name, player_marble)
         player = player_to_constant(engine_name).new(player_marble)
-        raise TypeError if player.instance_of?(Pentago::Players::Base)
+        raise TypeError if player.instance_of?(Pentago::Player)
 
-        if player.kind_of?(Pentago::Players::Human)
+        if player.kind_of?(Pentago::HumanPlayer)
           player.ask_for_move_callback = lambda { |player, board| ask_for_move(player, board) }
         end
 
@@ -125,7 +125,7 @@ BANNER
 
       def player_to_constant(name)
         camel = name.to_s.split('_').map { |s| s.capitalize }.join
-        eval("Pentago::Players::#{camel}")
+        eval("Pentago::#{camel}Player")
       end
 
       def gets
