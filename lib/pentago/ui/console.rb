@@ -100,7 +100,7 @@ BANNER
         end
       end
 
-      protected
+      private
 
       def options_valid?
         @options.keys.include?(:player1) && @options.keys.include?(:player2)

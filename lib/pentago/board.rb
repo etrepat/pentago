@@ -169,7 +169,7 @@ module Pentago
       restored
     end
 
-    protected
+    private
 
     def translate(x,y)
       x + ROWS*y

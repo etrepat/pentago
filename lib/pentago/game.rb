@@ -50,7 +50,7 @@ module Pentago
       players.next
     end
 
-    protected
+    private
 
     def players
       @players ||= [player1, player2].cycle
