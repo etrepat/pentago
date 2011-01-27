@@ -4,12 +4,12 @@ module Pentago
     InvalidSquareError    = Class.new(StandardError)
     InvalidDirectionError = Class.new(StandardError)
 
-    ROTATION_DIRECTIONS = [:clockwise, :counter_clockwise]
-
     ROTATION_MATRICES = {
       :clockwise          => [2,7,12,-5,0,5,-12,-7,-2],
       :counter_clockwise  => [12,5,-2,7,0,-7,2,-5,-12]
     }
+
+    ROTATION_DIRECTIONS = ROTATION_MATRICES.keys
 
     SQUARES = [
       [ 0, 1, 2, 6, 7, 8,12,13,14],
@@ -18,12 +18,11 @@ module Pentago
 	    [21,22,23,27,28,29,33,34,35]
     ]
 
-    ROWS = 6
-    COLS = 6
-    SIZE = 36
+    ROWS = COLS = 6
+    SIZE = ROWS * COLS
 
     def initialize
-      @squares = Array.new(SIZE, nil)
+      clear
     end
 
     attr_accessor :squares
@@ -66,7 +65,7 @@ module Pentago
     end
 
     def clear
-      @squares.replace(Array.new(SIZE, nil))
+      @squares = Array.new(SIZE, nil)
     end
 
     def find_winner
@@ -154,7 +153,7 @@ module Pentago
     def to_a
       squares
     end
-    
+
     def self.restore(board)
       restored = Board.new
       restored.squares = case
@@ -166,8 +165,8 @@ module Pentago
       else
         raise TypeError, 'incompatible types'
       end
-      
-      restored      
+
+      restored
     end
 
     protected
