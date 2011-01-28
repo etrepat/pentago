@@ -37,6 +37,14 @@ module Pentago
       @squares[translate(x, y)] = marble
     end
 
+    def rows
+      squares.each_slice(ROWS).to_a
+    end
+
+    def columns
+      rows.transpose
+    end
+
     def rotate(square, direction = :clockwise)
       raise InvalidSquareError, "Invalid square" unless SQUARES[square]
       raise InvalidDirectionError, "Unrecognized direction" \
