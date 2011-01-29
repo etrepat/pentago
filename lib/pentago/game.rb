@@ -7,45 +7,30 @@ module Pentago
       @player1        = player1
       @player2        = player2
       @board          = board
-      @player         = nil
+      @current_player = nil
       @winner         = nil
+      @players        = nil
     end
 
-    attr_reader :player1, :player2, :board
+    attr_reader :player1, :player2, :board, :current_player, :winner
 
     def play
-      while !@board.game_over?
-        @player = who_plays?
-        @player.play_turn(@board)
+      while !game_over?
+        @current_player = players.next
+        @current_player.play_turn(@board)
 
         changed
-        notify_observers @player, @board
+        notify_observers @current_player, @board
       end
-      @winner = @player unless tie_game?
+      @winner = @current_player unless tie_game?
     end
 
-    def turns
-      return @board.moves if @board
-      0
+    def turns_played
+      @board && @board.moves
     end
-
-    def player_at_turn
-      @player
-    end
-
-    def winner
-      @winner
-    end
-
-    def who_plays?
-      players.next
-    end
-
-    private
 
     def players
       @players ||= [player1, player2].cycle
     end
   end
 end
-
