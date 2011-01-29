@@ -1,6 +1,7 @@
 module Pentago
   class Game
     include Observable
+    include Pentago::Rules
 
     def initialize(player1, player2, board=Board.new)
       @player1        = player1
@@ -34,16 +35,6 @@ module Pentago
 
     def winner
       @winner
-    end
-
-    def game_over?
-      return @board.game_over? if @board
-      false
-    end
-
-    def tie_game?
-      return @board.tie? if @board
-      false
     end
 
     def who_plays?
