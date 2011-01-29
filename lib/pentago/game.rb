@@ -1,28 +1,38 @@
 module Pentago
   class Game
+    DuplicatedPlayersError  = Class.new(StandardError)
+    
     include Observable
     include Pentago::Rules
-
-    def initialize(player1, player2, board=Board.new)
-      @player1        = player1
-      @player2        = player2
-      @board          = board
-      @current_player = nil
-      @winner         = nil
-      @players        = nil
+    
+    def initialize(params)
+      @player1  = params.fetch(:player1)
+      @player2  = params.fetch(:player2)
+      raise DuplicatedPlayersError if @player1.marble == @player2.marble
+      
+      @board    = params.fetch(:board, Board.new)
     end
 
-    attr_reader :player1, :player2, :board, :current_player, :winner
+    attr_reader :player1, :player2, :board, :current_player
 
     def play
-      while !game_over?
-        @current_player = players.next
-        @current_player.play_turn(@board)
+      reset
+      play_turn while !game_over?
+    end
+    
+    def reset
+      @board.clear
+      @current_player = nil
+      @winner         = nil
+      turn.rewind
+    end
+    
+    def play_turn
+      @current_player = turn.next
+      @current_player.play_turn(@board)
 
-        changed
-        notify_observers @current_player, @board
-      end
-      @winner = @current_player unless tie_game?
+      changed
+      notify_observers self
     end
 
     def turns_played
@@ -30,7 +40,17 @@ module Pentago
     end
 
     def players
-      @players ||= [player1, player2].cycle
+      @players ||= [player1, player2]
+    end
+    
+    def winner
+      @winner ||= find_winner
+    end
+    
+    private
+    
+    def turn
+      @turn ||= players.cycle
     end
   end
 end

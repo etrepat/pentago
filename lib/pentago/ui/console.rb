@@ -11,7 +11,8 @@ module Pentago
       def run
         if parsed_options? && options_valid?
           @board  = Pentago::Board.new
-          @game   = Pentago::Game.new(@options[:player1], @options[:player2], @board)
+          @game = Pentago::Game.new(:player1 => @options[:player1], 
+            :player2 => @options[:player2], :board => @board)
           @game.add_observer(self)
 
           @game.play
@@ -20,22 +21,22 @@ module Pentago
         end
       end
 
-      def update(player_at_turn, board)
+      def update(game)
         # get info
-        marble      = player_at_turn.marble
-        x, y, s, d  = player_at_turn.last_move
+        marble      = game.current_player.marble
+        x, y, s, d  = game.current_player.last_move
 
         # output turn info & board
-        say "\nTurn #{board.moves}: Player #{marble} played: [#{x}, #{y}], rotated square: #{s} #{d}"
-        if board.game_over?
-          if board.tie?
+        say "\nTurn #{game.turns_played}: Player #{marble} played: [#{x}, #{y}], rotated square: #{s} #{d}"
+        if game.game_over?
+          if game.tie_game?
             say "Game ends w/state: --- TIE GAME ---"
           else
-            say "Game ends w/state: --- PLAYER #{board.find_winner} WINS! ---"
+            say "Game ends w/state: --- PLAYER #{game.find_winner} WINS! ---"
           end
         end
 
-        say board
+        say game.board
       end
 
       def ask_for_move(player, board)
@@ -153,4 +154,3 @@ BANNER
     end
   end
 end
-
