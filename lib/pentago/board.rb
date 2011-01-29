@@ -88,6 +88,8 @@ module Pentago
       end.join("\n")
     end
     
+    alias_method :to_str, :to_s
+    
     def to_a
       squares
     end
