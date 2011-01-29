@@ -75,37 +75,19 @@ module Pentago
     def clear
       @squares = Array.new(SIZE, nil)
     end
-
+    
     def to_s
-      output = ''
-      output << "   0  1  2 | 3  4  5 \n"
+      output = "   0  1  2 | 3  4  5 \n"
       output << "  ---------+---------\n"
-      lines  = 0
-      squares.each_with_index do |value, index|
-        if index != 0
-          if index % 6 == 0
-            output << "\n"
-            output << "#{lines}|" if index % 18 != 0
-            lines += 1
-          elsif index % 3 == 0
-            output << "|"
-          end
-
-          if index % 18 == 0
-            output << "  ---------+---------\n"
-            output << "#{lines}|"
-          end
-		    else
-          output << "0|"
-          lines += 1
-        end
-
-        output << (value.nil? ? ' . ' : " #{value} ")
-      end
-
-      output
+      output << rows.map.with_index do |row, i|
+        row_output = i == 3 ? "  ---------+---------\n#{i}|" : "#{i}|"
+        row_output << row.map.with_index do |value, j|
+          cell_output = j == 3 ? '|' : ''
+          cell_output << (value ? " #{value} " : ' . ')
+        end.join
+      end.join("\n")
     end
-
+    
     def to_a
       squares
     end
