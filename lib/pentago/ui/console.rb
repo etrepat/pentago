@@ -70,16 +70,18 @@ BANNER
 
       def update(game)
         # get info
-        marble      = game.current_player.marble
+        player      = game.current_player
         x, y, s, d  = game.current_player.last_move
+        total_turns = game.turns_played
+        winner      = game.winner
 
         # output turn info & board
-        terminal.say "\nTurn #{game.turns_played}: Player #{marble} played: [#{x}, #{y}], rotated square: #{s} #{d}"
+        terminal.say "\nTurn #{total_turns}: Player #{player} played: [#{x}, #{y}], rotated square: #{s} #{d}"
         if game.game_over?
           if game.tie_game?
             terminal.say "Game ends w/state: --- TIE GAME ---"
           else
-            terminal.say "Game ends w/state: --- PLAYER #{game.find_winner.marble} WINS! ---"
+            terminal.say "Game ends w/state: --- PLAYER #{winner} WINS! ---"
           end
         end
 
@@ -88,7 +90,7 @@ BANNER
 
       def ask_for_move(player, board)
         terminal.say board if board.moves == 0
-        terminal.say "\nPlayer #{player.marble}. It's your Turn."
+        terminal.say "\nPlayer #{player}. It's your Turn."
 
         x, y = terminal.ask("Marble position? (x,y) ", lambda { |s|
           s.split(',').map(&:to_i) }) do |q|
