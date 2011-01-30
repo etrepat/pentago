@@ -60,17 +60,6 @@ module Pentago
 
         @board.squares.should == @other_board.squares
       end
-
-      it 'should hold last played move' do
-        @base_player1.last_move.should be_nil
-        @base_player2.last_move.should be_nil
-
-        @base_player1.execute_move(@board, 1, 1, 0, :clockwise)
-        @base_player2.execute_move(@board, 2, 1, 1, :counter_clockwise)
-
-        @base_player1.last_move.should == [1, 1, 0, :clockwise]
-        @base_player2.last_move.should == [2, 1, 1, :counter_clockwise]
-      end
     end
   end
 

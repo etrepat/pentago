@@ -1,7 +1,5 @@
 module Pentago  
   class NegamaxPlayer < Pentago::Player
-    include Pentago::Rules
-    
     def initialize(marble, name='', search_depth=1)
       super(marble, name)      
       @search_depth = search_depth
@@ -18,14 +16,13 @@ module Pentago
         board_copy[x, y] = @marble
         board_copy.rotate(s, d)
         
-        negamax(board_copy, @search_depth, @marble == 1 ? 2 : 1)
+        negamax(board_copy, @search_depth, opponent(@marble))
       end.first.flatten
     end
     
     def negamax(board, depth, player, alpha=-1, beta=1)
-      return score(board, player) if depth == 0 || board.full?
+      return score(board, player) if depth == 0 || check_game_over(board)
       
-      next_to_move = ((player == 1) ? 2 : 1)
       available_moves(board).each do |square, rotation|
         x, y = square
         s, d = rotation
@@ -34,25 +31,29 @@ module Pentago
         board_copy[x,y] = player
         board_copy.rotate(s, d)
         
-        alpha = [alpha, -negamax(board_copy, depth-1, next_to_move, -beta, -alpha)].max
+        alpha = [alpha, -negamax(board_copy, depth-1, opponent(player), -beta, -alpha)].max
         return beta if alpha >= beta
       end
+      
       alpha
     end
     
     # TODO: improve scoring functions
     def score(board, player)
-      opponent = ((player == 1) ? 2 : 1)
       winner = find_winner(board)
       return 1000000 if winner && winner == player
-      return -1000000 if winner && winner == opponent
-      score_for(board, player) - score_for(board, opponent)
+      return -1000000 if winner && winner == opponent(player)
+      score_for(board, player) - score_for(board, opponent(player))
     end
     
     def score_for(board, marble)
       (board.rows + board.columns + board.diagonals).map do |run|
         run.select { |value| value.nil? || value == marble }.size
       end.reduce(&:+)
+    end
+    
+    def opponent(player)
+      (player == 1) ? 2 : 1
     end
     
     def available_moves(board)

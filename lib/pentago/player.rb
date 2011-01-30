@@ -1,5 +1,7 @@
 module Pentago
   class Player
+    include Pentago::Rules
+
     def initialize(marble, name='')
       @marble     = marble
       @name       = name
@@ -11,6 +13,7 @@ module Pentago
     def play_turn(board)
       x, y, s, d = compute_next_move(board)
       execute_move(board, x, y, s, d)
+      @last_move = [x, y, s, d]
     end
 
     def compute_next_move(board)
@@ -20,11 +23,8 @@ module Pentago
 
     def execute_move(board, x, y, square, direction)
       board[x, y] = marble
-      board.rotate(square, direction)
-      @last_move = [x, y, square, direction]
+      board.rotate(square, direction)      
     end
-
-    # Note: add common player logic methods here...
     
     def ==(player)
       self.marble == player.marble 
