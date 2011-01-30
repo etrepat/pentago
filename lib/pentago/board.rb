@@ -28,7 +28,7 @@ module Pentago
     attr_accessor :squares
 
     def [](x, y)
-      raise IllegalPositionError, "Illegal position [#{x}, #{y}]" unless in_range?(x, y)
+      raise IllegalPositionError, "Illegal position [#{x}, #{y}]" unless valid_position?(x, y)
       @squares[translate(x, y)]
     end
 
@@ -128,7 +128,7 @@ module Pentago
       x + ROWS*y
     end
 
-    def in_range?(x, y)
+    def valid_position?(x, y)
       r = 0...ROWS
       r.include?(x) && r.include?(y)
     end
