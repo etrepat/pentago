@@ -1,7 +1,7 @@
 module Pentago
   class HumanPlayer < Pentago::Player
-    def initialize(marble, callback=nil)
-      super(marble)
+    def initialize(marble, name='', callback=nil)
+      super(marble, name)
       @ask_for_move_callback = callback
     end
 
