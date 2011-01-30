@@ -106,6 +106,12 @@ module Pentago
     def to_a
       squares
     end
+    
+    def ==(board)
+      squares == board.squares
+    end
+    
+    alias_method :eql?, :==
 
     def self.restore(board)
       restored = Board.new

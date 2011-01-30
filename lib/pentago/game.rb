@@ -8,7 +8,7 @@ module Pentago
     def initialize(params)
       @player1  = params.fetch(:player1)
       @player2  = params.fetch(:player2)
-      raise DuplicatedPlayersError if @player1.marble == @player2.marble
+      raise DuplicatedPlayersError if @player1 == @player2
       
       @board    = params.fetch(:board, Board.new)
     end

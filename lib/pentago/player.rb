@@ -1,11 +1,12 @@
 module Pentago
   class Player
-    def initialize(marble)
+    def initialize(marble, name='')
       @marble     = marble
+      @name       = name
       @last_move  = nil
     end
 
-    attr_reader :marble, :last_move
+    attr_reader :marble, :name, :last_move
 
     def play_turn(board)
       x, y, s, d = compute_next_move(board)
@@ -24,6 +25,18 @@ module Pentago
     end
 
     # Note: add common player logic methods here...
+    
+    def ==(player)
+      self.marble == player.marble 
+    end
+    
+    alias_method :eql?, :==
+    
+    def to_s
+      name.blank? ? marble.to_s : name
+    end
+    
+    alias_method :to_str, :to_s
   end
 end
 
