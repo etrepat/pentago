@@ -16,5 +16,6 @@ require_relative 'pentago/version'
 require_relative 'pentago/player'
 require_relative 'pentago/dummy_player'
 require_relative 'pentago/human_player'
+require_relative 'pentago/negamax_player'
 
 require_relative 'pentago/ui/console'
