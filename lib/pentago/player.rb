@@ -33,7 +33,7 @@ module Pentago
     alias_method :eql?, :==
     
     def to_s
-      name.blank? ? marble.to_s : name
+      name.empty? ? marble.to_s : name
     end
     
     alias_method :to_str, :to_s
