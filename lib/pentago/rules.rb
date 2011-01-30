@@ -1,9 +1,5 @@
 module Pentago
   module Rules
-    # def find_winner(board)
-    #   @winning_marble ||= check_winner(board)
-    # end
-    
     def find_winner(board)
       winners = players_with_5_in_a_row(board)
       if winners.empty? || winners.size > 1
@@ -13,11 +9,11 @@ module Pentago
       end      
     end
     
-    def game_over?(board)
-      find_winner(board) || tie_game?(board)
+    def check_game_over(board)
+      find_winner(board) || check_tie_game(board)
     end
     
-    def tie_game?(board)
+    def check_tie_game(board)
       !find_winner(board) && (board.full? || players_with_5_in_a_row(board).size > 1)
     end
     

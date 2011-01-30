@@ -17,7 +17,7 @@ module Pentago
 
     def play
       reset
-      play_turn while !game_over?(@board)
+      play_turn while !game_over?
     end
     
     def reset
@@ -44,8 +44,24 @@ module Pentago
     end
     
     def winner
-      @winner ||= find_winner(@board)
-      players.each { |player| return player if player.marble == @winner } if @winner
+      unless @winner
+        who_won = find_winner(@board)
+        @winner = players.select { |p| p.marble == who_won }.first
+      end
+      
+      @winner
+    end
+    
+    def board_full?
+      @board.full?
+    end
+    
+    def game_over?
+      check_game_over(@board)
+    end
+    
+    def tie_game?
+      check_tie_game(@board)
     end
     
     private

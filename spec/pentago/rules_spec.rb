@@ -69,62 +69,62 @@ module Pentago
       end
     end
 
-    describe '#game_over?' do
+    describe '#check_game_over' do
       it 'should return true if there is a winner' do
-        @rules.game_over?(@winning_board).should be_true
+        @rules.check_game_over(@winning_board).should be_true
       end
       
       it 'should return true if tie game' do
-        def @rules.tie_game?(board)
+        def @rules.check_tie_game(board)
           true
         end
         
-        @rules.game_over?(@open_board).should be_true
+        @rules.check_game_over(@open_board).should be_true
       end
       
       it 'should return false if game is open' do
         @rules.find_winner(@open_board).should be_nil
-        def @rules.tie_game?(board)
+        def @rules.check_tie_game(board)
           false
         end
         
-        @rules.game_over?(@open_board).should be_false
+        @rules.check_tie_game(@open_board).should be_false
       end
     end
     
-    describe '#tie_game?' do
+    describe '#check_tie_game' do
       it 'should return false when game is open (not full)' do
         @rules.find_winner(@open_board).should be_nil
         @open_board.full?.should be_false
-        @rules.tie_game?(@open_board).should be_false
+        @rules.check_tie_game(@open_board).should be_false
       end
       
       it 'should return true when board is full & no winner, false othw' do
         @rules.find_winner(@full_board).should be_nil
         @full_board.full?.should be_true
-        @rules.tie_game?(@full_board).should be_true
+        @rules.check_tie_game(@full_board).should be_true
       end
       
       it 'should return false when there is only one winner' do        
         @full_board.squares[0] = 2
         @rules.find_winner(@full_board).should == 2
-        @rules.tie_game?(@full_board).should be_false        
+        @rules.check_tie_game(@full_board).should be_false        
         
         @rules.find_winner(@winning_board).should == 1
-        @rules.tie_game?(@winning_board).should be_false
+        @rules.check_tie_game(@winning_board).should be_false
       end
       
       it 'should return true if two winners at the same time' do
         @full_board.squares[0] = 2
         @full_board.squares[Pentago::Board::SIZE-1] = 1
-        @rules.tie_game?(@full_board).should be_true
+        @rules.check_tie_game(@full_board).should be_true
         
         two_winners = Board.restore([nil,1,2,nil,1,nil,nil,2,nil,nil,2,nil,nil,
           nil,1,2,nil,nil,2,1,2,2,2,2,1,nil,2,nil,nil,1,1,nil,2,nil,1,1])
         two_winners[3,5] = 1
         two_winners.rotate(2, :counter_clockwise)
         # now there's two winners there (tie)
-        @rules.tie_game?(two_winners).should be_true        
+        @rules.check_tie_game(two_winners).should be_true        
       end
     end
   end
