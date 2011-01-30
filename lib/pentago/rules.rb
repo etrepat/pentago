@@ -30,23 +30,7 @@ module Pentago
     end
     
     def runs_to_check
-      board.rows + board.columns + center_diagonals + off_center_diagonals
-    end
-    
-    # TODO: add an algorithm to retrieve diagonals of a generic NxN board
-    
-    def center_diagonals
-      diagonals = []
-      diagonals << Board::ROWS.times.map { |r| board[r, r] }
-      diagonals << Board::ROWS.times.map { |r| board[Board::ROWS-1-r, r] }
-    end
-    
-    def off_center_diagonals
-      diagonals = []
-      diagonals << (Board::ROWS-1).times.map { |r| board[r, r+1] }
-      diagonals << (Board::ROWS-1).times.map { |r| board[r+1, r] }
-      diagonals << (Board::ROWS-1).times.map { |r| board[r,Board::ROWS-2-r] }
-      diagonals << (Board::ROWS-1).times.map { |r| board[r+1, Board::ROWS-1-r] }
+      board.rows + board.columns + board.diagonals
     end
   end
 end

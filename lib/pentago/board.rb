@@ -44,7 +44,20 @@ module Pentago
     def columns
       rows.transpose
     end
-
+    
+    # TODO: add an algorithm to retrieve diagonals of a generic NxN board
+    def diagonals
+      diagonals = []
+      # center diagonals
+      diagonals << ROWS.times.map { |r| self[r, r] }
+      diagonals << ROWS.times.map { |r| self[ROWS-1-r, r] }
+      # off-center diagonals
+      diagonals << (ROWS-1).times.map { |r| self[r, r+1] }
+      diagonals << (ROWS-1).times.map { |r| self[r+1, r] }
+      diagonals << (ROWS-1).times.map { |r| self[r,ROWS-2-r] }
+      diagonals << (ROWS-1).times.map { |r| self[r+1,ROWS-1-r] }
+    end
+      
     def rotate(square, direction = :clockwise)
       raise InvalidSquareError, "Invalid square" unless SQUARES[square]
       raise InvalidDirectionError, "Unrecognized direction" \
