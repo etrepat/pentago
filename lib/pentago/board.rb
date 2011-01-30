@@ -76,6 +76,14 @@ module Pentago
 
       @squares = board
     end
+    
+    def empty_squares
+      squares.map.with_index { |sq, index| index unless sq }.compact
+    end
+    
+    def empty_positions
+      empty_squares.map { |sq| [sq%COLS, sq/ROWS] }
+    end
 
     def moves
       squares.compact.size
@@ -112,6 +120,10 @@ module Pentago
     end
     
     alias_method :eql?, :==
+    
+    def dup
+      Board.restore(squares)
+    end
 
     def self.restore(board)
       restored = Board.new
@@ -140,4 +152,3 @@ module Pentago
     end
   end
 end
-
