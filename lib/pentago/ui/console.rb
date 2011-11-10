@@ -12,12 +12,12 @@ module Pentago
       def run
         if parsed_options? && options_valid?
           @game = Pentago::Game.new(
-            :player1  => @options[:player1], 
-            :player2  => @options[:player2], 
+            :player1  => @options[:player1],
+            :player2  => @options[:player2],
             :board    => @options[:board] || Pentago::Board.new
           )
           @game.add_observer(self)
-          
+
           @game.play
         else
           output_usage
@@ -32,8 +32,15 @@ Pentago Bot/Game AI Console Lab v#{Pentago.version}
 Usage:
   pentago --player1=[Engine] --player2=[Engine] ([options])
 
-Example:
-  pentago --player1=Human --player2=Minimax
+Example/s:
+  * Player vs Negamax engine:
+  pentago --player1=Human --player2=Negamax
+
+  * Watch computer play w/ itself:
+  pentago --player1=Negamax --player2=Negamax
+
+  * Player vs Player
+  pentago --player1=Human --player2=Human
 
 Options are:
 BANNER
@@ -97,11 +104,11 @@ BANNER
           q.whitespace  = :remove
           q.validate    = /[0-5],[0-5]/
         end
-        
+
         s = terminal.ask('Square to rotate? (0-3) ', String) do |q|
           q.validate = /[0-3]/
         end.to_i
-        
+
         d = terminal.ask('Direction? (cw or ccw)', lambda { |s|
           s == 'cw' ? :clockwise : :counter_clockwise }) do |q|
           q.validate = /cw|ccw/
@@ -112,7 +119,7 @@ BANNER
       end
 
       private
-      
+
       attr_reader :terminal
 
       def options_valid?
