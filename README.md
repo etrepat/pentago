@@ -68,21 +68,12 @@ To try, test or use this program you can just:
     [Highline](https://github.com/JEG2/highline) for console manipulation,
     [Rake](http://rake.rubyforge.org/) and [RSpec](https://www.relishapp.com/rspec) for testing.
 3.  Launch the binary script, located in the `bin/` folder, specifying the desired
-    player strategies to use for each of the players.
+    player strategies to use for each of the players. For example, from the project's root:
 
-    For example, from the project's root:
-
-    Show help screen:
-      `bin/pentago -h`
-
-    Human player (you) vs Negamax implementation:
-      `bin/pentago --player1=Human --player2==Negamax`
-
-    Dummy player vs Negamax implementation:
-      `bin/pentago --player1=Dummy --player2==Negamax`
-
-    Negamax vs Negamax:
-      `bin/pentago --player1=Negamax --player2==Negamax`
+    * Show help screen: `bin/pentago -h`
+    * Human player (you) vs Negamax implementation: `bin/pentago --player1=Human --player2==Negamax`
+    * Dummy player vs Negamax implementation: `bin/pentago --player1=Dummy --player2==Negamax`
+    * Negamax vs Negamax: `bin/pentago --player1=Negamax --player2==Negamax`
 
 ### TODO
 
