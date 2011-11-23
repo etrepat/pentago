@@ -12,9 +12,9 @@ module Pentago
       def run
         if parsed_options? && options_valid?
           @game = Pentago::Game.new(
+            :board    => @options[:board],
             :player1  => @options[:player1],
-            :player2  => @options[:player2],
-            :board    => @options[:board] || Pentago::Board.new
+            :player2  => @options[:player2]
           )
           @game.add_observer(self)
 
@@ -135,7 +135,7 @@ BANNER
         raise TypeError if player.instance_of?(Pentago::Player)
 
         if player.kind_of?(Pentago::HumanPlayer)
-          player.ask_for_move_callback = lambda { |player, board| ask_for_move(player, board) }
+          player.ask_for_move_callback = method(:ask_for_move)
         end
 
         player
@@ -145,7 +145,7 @@ BANNER
 
       def player_to_constant(name)
         camel = name.to_s.split('_').map { |s| s.capitalize }.join
-        eval("Pentago::#{camel}Player")
+        Pentago.const_get("#{camel}Player")
       end
     end
   end
