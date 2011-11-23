@@ -1,15 +1,14 @@
 module Pentago
-  class DummyPlayer < Pentago::Player
+  class DummyPlayer < Player
     def compute_next_move(board)
       # search for empty space w/ a highly precise algorithm :)
-      x, y = rand(Pentago::Board::COLS), rand(Pentago::Board::ROWS)
-      while board[x,y]
-        x, y = rand(Pentago::Board::COLS), rand(Pentago::Board::ROWS)
-      end
+      begin
+        x, y = rand(Board::COLS), rand(Board::ROWS)
+      end while board[x,y]
 
       # equally, search for a square to turn? into which direction
-      square    = rand(Pentago::Board::SQUARES.size)
-      direction = Pentago::Board::ROTATION_DIRECTIONS.sample
+      square    = rand(Board::SQUARES.size)
+      direction = Board::ROTATION_DIRECTIONS.sample
 
       # now return a sure winning move...
       [x, y, square, direction]
