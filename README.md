@@ -77,11 +77,14 @@ To try, test or use this program you can just:
 
 ### TODO
 
+* Allow the Game to use an starting board state instead of always a blank one.
 * The [Negamax](http://en.wikipedia.org/wiki/Negamax) algorithm implementation
 needs some re-thought/re-work as there are some assumptions in there which are
 *not quite right*&trade;. Also, it's pretty *slow* if the search space depth is increased.
 * Modularize better the game mechanics from the player strategies to get a better
 player abstraction to implement more strategies easily.
+* Figure out a way to specify a difficulty setting which changes the adversarial
+search depth search space.
 * Implement more player strategies/algorithms. For example: [Negascout](http://en.wikipedia.org/wiki/Negascout),
 [Monte Carlo Method](http://en.wikipedia.org/wiki/Monte_Carlo_method), [UCT](http://senseis.xmp.net/?UCT)
 * Implement a backend module which allows for a web-application frontend to
@@ -94,4 +97,3 @@ This Pentago Bot/AI project is released under the terms of the [MIT License](htt
 ---
 
 Coded by [Estanislau Trepat](http://etrepat.com).
-
