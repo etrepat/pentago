@@ -28,7 +28,7 @@ module Pentago
     attr_accessor :squares
 
     def [](x, y)
-      raise IllegalPositionError, "Illegal position [#{x}, #{y}]" unless valid_position?(x, y)
+      raise IllegalPositionError, "illegal position [#{x}, #{y}]" unless valid_position?(x, y)
       @squares[translate(x, y)]
     end
 
@@ -38,55 +38,56 @@ module Pentago
     end
 
     def rows
-      squares.each_slice(ROWS).to_a
+      @squares.each_slice(ROWS).to_a
     end
 
     def columns
       rows.transpose
     end
-    
+
     # TODO: add an algorithm to retrieve diagonals of a generic NxN board
     def diagonals
       diagonals = []
+
       # center diagonals
-      diagonals << ROWS.times.map { |r| self[r, r] }
-      diagonals << ROWS.times.map { |r| self[ROWS-1-r, r] }
+      diagonals << Array.new(ROWS) { |r| self[r, r] }
+      diagonals << Array.new(ROWS) { |r| self[ROWS-r-1, r] }
+
       # off-center diagonals
-      diagonals << (ROWS-1).times.map { |r| self[r, r+1] }
-      diagonals << (ROWS-1).times.map { |r| self[r+1, r] }
-      diagonals << (ROWS-1).times.map { |r| self[r,ROWS-2-r] }
-      diagonals << (ROWS-1).times.map { |r| self[r+1,ROWS-1-r] }
+      diagonals << Array.new(ROWS-1) { |r| self[r,r+1] }
+      diagonals << Array.new(ROWS-1) { |r| self[r+1,r] }
+      diagonals << Array.new(ROWS-1) { |r| self[r,ROWS-r-2] }
+      diagonals << Array.new(ROWS-1) { |r| self[r+1,ROWS-r-1] }
     end
-      
+
     def rotate(square, direction = :clockwise)
-      raise InvalidSquareError, "Invalid square" unless SQUARES[square]
-      raise InvalidDirectionError, "Unrecognized direction" \
+      raise InvalidSquareError, 'invalid square' unless SQUARES[square]
+      raise InvalidDirectionError, 'unrecognized rotation direction' \
         unless ROTATION_DIRECTIONS.include?(direction)
 
-      board = squares.dup
+      rotated_squares = @squares.dup
 
-      iterator = (0..8).to_a
-      iterator.reverse! if direction == :counter_clockwise
-
-      iterator.each do |p|
-        position = SQUARES[square][p]
-        marble = squares[position]
-        board[position + ROTATION_MATRICES[direction][p]] = marble
+      itx = (0..8).to_a
+      itx.reverse! if direction == :counter_clockwise
+      itx.each do |p|
+        position  = SQUARES[square][p]
+        marble    = @squares[position]
+        rotated_squares[position + ROTATION_MATRICES[direction][p]] = marble
       end
 
-      @squares = board
+      @squares = rotated_squares
     end
-    
+
     def empty_squares
-      squares.map.with_index { |sq, index| index unless sq }.compact
+      @squares.map.with_index { |sq, index| index unless sq }.compact
     end
-    
+
     def empty_positions
       empty_squares.map { |sq| [sq%COLS, sq/ROWS] }
     end
 
     def moves
-      squares.compact.size
+      @squares.compact.size
     end
 
     def full?
@@ -96,7 +97,7 @@ module Pentago
     def clear
       @squares = Array.new(SIZE, nil)
     end
-    
+
     def to_s
       output = "   0  1  2 | 3  4  5 \n"
       output << "  ---------+---------\n"
@@ -108,30 +109,30 @@ module Pentago
         end.join
       end.join("\n")
     end
-    
+
     alias_method :to_str, :to_s
-    
+
     def to_a
-      squares
+      @squares
     end
-    
+
     def ==(board)
-      squares == board.squares
+      @squares == board.squares
     end
-    
+
     alias_method :eql?, :==
-    
+
     def dup
-      Board.restore(squares)
+      Board.restore(@squares)
     end
 
     def self.restore(board)
       restored = Board.new
-      restored.squares = case
-      when board.is_a?(Array)
+      restored.squares = case board
+      when Array
         raise TypeError, "incompatible board array #{board.size}" if board.size != SIZE
         board.dup
-      when board.is_a?(Pentago::Board)
+      when Board
         board.dup.to_a
       else
         raise TypeError, 'incompatible types'
@@ -147,8 +148,7 @@ module Pentago
     end
 
     def valid_position?(x, y)
-      r = 0...ROWS
-      r.include?(x) && r.include?(y)
+      x >= 0 && x < COLS && y >= 0 && y < ROWS
     end
   end
 end
