@@ -1,5 +1,5 @@
 module Pentago
-  class NegamaxPlayer < Pentago::Player
+  class NegamaxPlayer < Player
     def initialize(marble, name='', search_depth=1)
       super(marble, name)
       @search_depth = search_depth
@@ -47,9 +47,9 @@ module Pentago
     end
 
     def score_for(board, marble)
-      (board.rows + board.columns + board.diagonals).map do |run|
-        run.select { |value| value.nil? || value == marble }.size
-      end.reduce(&:+)
+      (board.rows + board.columns + board.diagonals).inject(0) do |sum, run|
+        sum + run.count { |value| value.nil? || value == marble }
+      end
     end
 
     def opponent(player)
