@@ -7,8 +7,8 @@ require 'highline'
 
 module Pentago; end
 
-require_relative 'pentago/board'
 require_relative 'pentago/rules'
+require_relative 'pentago/board'
 require_relative 'pentago/game'
 require_relative 'pentago/version'
 

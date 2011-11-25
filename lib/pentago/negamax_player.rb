@@ -1,18 +1,19 @@
 module Pentago
   class NegamaxPlayer < Player
-    def initialize(marble, name='', search_depth=1)
-      super(marble, name)
-      @search_depth = search_depth
+    def initialize(opts={})
+      super(opts)
+
+      @search_depth = opts.fetch(:search_depth, 1)
     end
 
     attr_accessor :search_depth
 
-    def compute_next_move(board)
-      available_moves(board).sort_by do |square, rotation|
+    def compute_next_move
+      available_moves(@board).sort_by do |square, rotation|
         x, y = square
         s, d = rotation
 
-        board_copy = board.dup
+        board_copy = @board.dup
         board_copy[x, y] = @marble
         board_copy.rotate(s, d)
 
@@ -21,7 +22,7 @@ module Pentago
     end
 
     def negamax(board, depth, player, alpha=-1, beta=1)
-      return score(board, player) if depth == 0 || check_game_over(board)
+      return score(board, player) if depth == 0 || board.game_over?
 
       available_moves(board).each do |square, rotation|
         x, y = square
@@ -40,14 +41,14 @@ module Pentago
 
     # TODO: improve scoring functions
     def score(board, player)
-      winner = find_winner(board)
+      winner = board.find_winner
       return 1000000 if winner && winner == player
       return -1000000 if winner && winner == opponent(player)
       score_for(board, player) - score_for(board, opponent(player))
     end
 
     def score_for(board, marble)
-      (board.rows + board.columns + board.diagonals).inject(0) do |sum, run|
+      board.runs.inject(0) do |sum, run|
         sum + run.count { |value| value.nil? || value == marble }
       end
     end
@@ -63,4 +64,3 @@ module Pentago
     end
   end
 end
-

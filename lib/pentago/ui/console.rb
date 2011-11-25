@@ -11,13 +11,16 @@ module Pentago
 
       def run
         if parsed_options? && options_valid?
-          @game = Pentago::Game.new(
-            :board    => @options[:board],
-            :player1  => @options[:player1],
-            :player2  => @options[:player2]
-          )
-          @game.add_observer(self)
+          @game = Pentago::Game.create(@options)
 
+          # Assign callbacks to ask for moves (if applicable)
+          @game.players.each do |player|
+            if player.kind_of?(Pentago::HumanPlayer)
+              player.ask_for_move_callback = method(:ask_for_move)
+            end
+          end
+
+          @game.add_observer(self)
           @game.play
         else
           output_usage
@@ -46,12 +49,12 @@ Options are:
 BANNER
           opts.on('--player1=PLAYER', String,
             'Player 1 Engine (required)') do |engine|
-              @options[:player1] = load_player(engine, 1)
+              @options[:player_engine_1] = classify(engine)
           end
 
           opts.on('--player2=PLAYER', String,
             'Player 2 Engine (required)') do |engine|
-              @options[:player2] = load_player(engine, 2)
+              @options[:player_engine_2] = classify(engine)
           end
 
           # TODO: option for reading a board from a text file
@@ -68,7 +71,8 @@ BANNER
         end
 
         begin
-          @options_parser.parse!(@arguments)
+          require "pp"
+          pp @options_parser.parse!(@arguments)
         rescue TypeError, OptionParser::ParseError => e
           @options_parser.warn e.message
           nil
@@ -123,29 +127,16 @@ BANNER
       attr_reader :terminal
 
       def options_valid?
-        @options.keys.include?(:player1) && @options.keys.include?(:player2)
+        @options.keys.include?(:player_engine_1) && @options.keys.include?(:player_engine_2)
       end
 
       def output_usage
         terminal.say @options_parser.to_s
       end
 
-      def load_player(engine_name, player_marble)
-        player = player_to_constant(engine_name).new(player_marble)
-        raise TypeError if player.instance_of?(Pentago::Player)
-
-        if player.kind_of?(Pentago::HumanPlayer)
-          player.ask_for_move_callback = method(:ask_for_move)
-        end
-
-        player
-      rescue Exception => e
-        raise TypeError, "#{e.message}\n!! invalid player engine (#{engine_name})!"
-      end
-
-      def player_to_constant(name)
-        camel = name.to_s.split('_').map { |s| s.capitalize }.join
-        Pentago.const_get("#{camel}Player")
+      # creates a class name from the provided engine name
+      def classify(engine_name)
+        "#{engine_name}_player".to_s.split('_').map { |s| s.capitalize }.join
       end
     end
   end

@@ -21,11 +21,30 @@ module Pentago
     ROWS = COLS = 6
     SIZE = ROWS * COLS
 
+    attr_accessor :squares
+
+    include Pentago::Rules
+
+    class << self
+      def restore(board)
+        restored = Board.new
+        restored.squares = case board
+        when Array
+          raise TypeError, "incompatible board array #{board.size}" if board.size != SIZE
+          board.dup
+        when Board
+          board.dup.to_a
+        else
+          raise TypeError, 'incompatible types'
+        end
+
+        restored
+      end
+    end
+
     def initialize
       clear
     end
-
-    attr_accessor :squares
 
     def [](x, y)
       raise IllegalPositionError, "illegal position [#{x}, #{y}]" unless valid_position?(x, y)
@@ -116,29 +135,14 @@ module Pentago
       @squares
     end
 
-    def ==(board)
-      @squares == board.squares
+    def ==(other)
+      @squares == other.squares
     end
 
     alias_method :eql?, :==
 
     def dup
       Board.restore(@squares)
-    end
-
-    def self.restore(board)
-      restored = Board.new
-      restored.squares = case board
-      when Array
-        raise TypeError, "incompatible board array #{board.size}" if board.size != SIZE
-        board.dup
-      when Board
-        board.dup.to_a
-      else
-        raise TypeError, 'incompatible types'
-      end
-
-      restored
     end
 
     private
