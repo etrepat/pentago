@@ -71,8 +71,7 @@ BANNER
         end
 
         begin
-          require "pp"
-          pp @options_parser.parse!(@arguments)
+          @options_parser.parse!(@arguments)
         rescue TypeError, OptionParser::ParseError => e
           @options_parser.warn e.message
           nil
